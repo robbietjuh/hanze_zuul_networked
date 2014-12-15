@@ -1,0 +1,109 @@
+package net.robbytu.hanze.zuul.game;/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashMap;
+
+/**
+ * Class Room - a room in an adventure game.
+ *
+ * This class is part of the "World of Zuul" application.
+ * "World of Zuul" is a very simple, text based adventure game.
+ *
+ * A "Room" represents one location in the scenery of the game.  It is
+ * connected to other rooms via exits.  For each existing exit, the room
+ * stores a reference to the neighboring room.
+ *
+ * @author  Michael Kölling and David J. Barnes
+ * @version 2011.08.08
+ */
+
+public class Room
+{
+    private ArrayList<Player> playersInRoom;
+    private String description;
+    private HashMap<String, Room> exits;        // stores exits of this room.
+
+    /**
+     * Create a room described "description". Initially, it has
+     * no exits. "description" is something like "a kitchen" or
+     * "an open court yard".
+     * @param description The room's description.
+     */
+    public Room(String description)
+    {
+        this.description = description;
+        exits = new HashMap<String, Room>();
+
+        this.playersInRoom = new ArrayList<Player>();
+    }
+
+    /**
+     * Define an exit from this room.
+     * @param direction The direction of the exit.
+     * @param neighbor  The room to which the exit leads.
+     */
+    public void setExit(String direction, Room neighbor)
+    {
+        exits.put(direction, neighbor);
+    }
+
+    /**
+     * @return The short description of the room
+     * (the one that was defined in the constructor).
+     */
+    public String getRoomDesc()
+    {
+        return this.getExits() + " " + description;
+    }
+
+    /**
+     * Return a string describing the room's exits, for example
+     * "Exits: north west".
+     * @return Details of the room's exits.
+     */
+    private String getExits()
+    {
+        String returnString = "";
+        Set<String> keys = exits.keySet();
+        for(String exit : keys) {
+            returnString += "," + exit;
+        }
+        return returnString;
+    }
+
+    /**
+     * Return the room that is reached if we go from this room in direction
+     * "direction". If there is no room in that direction, return null.
+     * @param direction The exit's direction.
+     * @return The room in the given direction.
+     */
+    public Room getExit(String direction)
+    {
+        return exits.get(direction);
+    }
+
+    /**
+     * Get the current players in this room
+     * @return Arraylist of players
+     */
+    public ArrayList<Player> getPlayersInRoom() {
+        return this.playersInRoom;
+    }
+
+    /**
+     * Leave the room
+     * @param player Player object that will leave the room
+     */
+    public void leaveRoom(Player player) {
+        if(this.playersInRoom.contains(player)) this.playersInRoom.remove(player);
+    }
+
+    /**
+     * Join the room
+     * @param player Player object that will join the room
+     */
+    public void joinRoom(Player player) {
+        if(!this.playersInRoom.contains(player)) this.playersInRoom.add(player);
+    }
+}
